@@ -1,53 +1,57 @@
 <?php
-//memulai session atau melanjutkan session yang sudah ada
+// 1. Memulai Session
 session_start();
 
-//menyertakan code dari file koneksi
-include "../service/database.php";
-//check jika sudah ada user yang login arahkan ke halaman admin
-if (isset($_SESSION['username'])) { 
-	header("location:admin.php"); 
+// 2. Panggil Koneksi Database
+include "../service/database.php"; 
+
+// 3. Cek apakah user sudah login? Jika ya, lempar ke dashboard
+if (isset($_SESSION['is_login']) && $_SESSION['is_login'] == true) { 
+    header("location: dashboard.php"); 
+    exit();
 }
 
+$login_message = ""; // Inisialisasi variabel pesan
+
+// 4. Logika saat tombol Login ditekan
+// Kita cek apakah ada request POST masuk
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-  $username = $_POST['user'];
-  
-  //menggunakan fungsi enkripsi md5 supaya sama dengan password  yang tersimpan di database
-  $password = md5($_POST['password']);
+    
+    // PERBAIKAN A: Ambil nama yang benar dari form HTML ('username' bukan 'user')
+    $username = $_POST['username'];
+    $password = $_POST['password']; 
+    // Catatan: Saya hapus md5() agar cocok dengan data register sebelumnya yang plain text. 
+    // Jika database Anda pakai md5, ubah jadi: $password = md5($_POST['password']);
 
-	//prepared statement
-  $stmt = $conn->prepare("SELECT username 
-                          FROM user 
-                          WHERE username=? AND password=?");
+    // PERBAIKAN B: Gunakan variabel $db (dari database.php), BUKAN $conn
+    // PERBAIKAN C: Gunakan tabel 'users' (jamak), biasanya sebelumnya Anda pakai 'users'
+    $stmt = $db->prepare("SELECT * FROM users WHERE username=? AND password=?");
+    
+    // Binding parameter
+    $stmt->bind_param("ss", $username, $password);
+    
+    // Eksekusi
+    $stmt->execute();
+    $hasil = $stmt->get_result();
+    
+    // Cek hasil
+    if ($hasil->num_rows > 0) {
+        $data = $hasil->fetch_assoc();
+        
+        // Simpan sesi
+        $_SESSION['username'] = $data['username'];
+        $_SESSION['is_login'] = true; // Penanda login sukses
 
-	//parameter binding 
-  $stmt->bind_param("ss", $username, $password);//username string dan password string
-  
-  //database executes the statement
-  $stmt->execute();
-  
-  //menampung hasil eksekusi
-  $hasil = $stmt->get_result();
-  
-  //mengambil baris dari hasil sebagai array asosiatif
-  $row = $hasil->fetch_array(MYSQLI_ASSOC);
+        // PERBAIKAN D: Redirect ke dashboard.php (karena admin.php tidak ada)
+        header("location: dashboard.php");
+        exit();
+    } else {
+        $login_message = "Username atau password salah!";
+    }
 
-  //check apakah ada baris hasil data user yang cocok
-  if (!empty($row)) {
-    //jika ada, simpan variable username pada session
-    $_SESSION['username'] = $row['username'];
-
-    //mengalihkan ke halaman admin
-    header("location:admin.php");
-  } else {
-	  //jika tidak ada (gagal), alihkan kembali ke halaman login
-    header("location:login.php");
-  }
-
-	//menutup koneksi database
-  $stmt->close();
-  $conn->close();
-} else {
+    $stmt->close();
+    // Jangan close $db di sini jika ingin include footer yang mungkin butuh db, tapi aman ditaruh di akhir.
+}
 ?>
 
 <!DOCTYPE html>
@@ -58,18 +62,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>Login Page</title>
     
    <link rel="stylesheet" href="../styles.css" />
-
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      crossorigin="anonymous"
-    />
-
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
-    />
-
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"/>
     <link rel="icon" href="../img/logo.webp" />
 </head>
 <body>
@@ -78,7 +72,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
         <div class="col-md-5">
-            
             <div class="card shadow-lg p-4">
                 <div class="card-body">
                     <h3 class="text-center mb-4 fw-bold" style="color: #1e3a5f;">Masuk Akun</h3>
@@ -105,7 +98,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         </div>
 
                         <div class="d-grid gap-2 mt-2">
-                            <button type="submit" name="" class="btn btn-primary" style="background-color: #1e3a5f; border: none;">
+                            <button type="submit" class="btn btn-primary" style="background-color: #1e3a5f; border: none;">
                                 Login Sekarang
                             </button>
                         </div>
@@ -116,12 +109,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <small>Belum punya akun? <a href="register.php" class="fw-bold">Daftar disini</a></small>
                 </div>
             </div>
-
         </div>
     </div>
 
     <?php include "../layout/footer.html" ?>
-    
 
     <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
         <button id="darkModeToggle" class="btn btn-outline-secondary rounded-circle p-3 shadow">
@@ -153,9 +144,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         });
     </script>
+    
+    <script>
+      document.getElementById("loginForm").addEventListener("submit", function(event) {
+          const user = document.getElementById("username").value.trim();
+          const pass = document.getElementById("password").value.trim();
+          const errorMsg = document.getElementById("errorMsg");
 
-    <?php
-}
-?>
+          errorMsg.textContent = "";
+
+          if (user === "") {
+              errorMsg.textContent = "Username tidak boleh kosong!";
+              event.preventDefault();
+              return;
+          }
+
+          if (pass === "") {
+              errorMsg.textContent = "Password tidak boleh kosong!";
+              event.preventDefault();
+              return;
+          }
+      });
+    </script>
 </body>
 </html>
