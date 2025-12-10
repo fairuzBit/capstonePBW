@@ -11,8 +11,5 @@ if($db->connect_error){
     echo "koneksi databases eror!";
     die("error!");
 
-}else{
-    echo "koneksi database berhasil";
 }
-
 ?>
