@@ -1,0 +1,150 @@
+/* =====================
+   TRANSISI & DASAR
+===================== */
+body,
+.navbar,
+.btn,
+.container,
+section,
+footer,
+.card {
+  transition: background-color 0.4s ease, color 0.4s ease,
+    border-color 0.4s ease;
+  font-family: "Poppins", sans-serif;
+}
+
+/* =====================
+   MODE TERANG (LIGHT MODE)
+===================== */
+
+/* Latar belakang & teks utama */
+body {
+  background-color: #e9ecef; /* abu kebiruan lembut */
+  color: #1c1c1c;
+}
+
+/* Navbar */
+.navbar {
+  background-color: #1e3a5f; /* biru tua klasik */
+}
+.navbar .navbar-brand {
+  color: #f4d35e; /* gold lembut, standout */
+  font-weight: 600;
+}
+.navbar .navbar-brand:hover {
+  color: #ffd60a;
+}
+.navbar .nav-link {
+  color: #e9ecef;
+}
+.navbar .nav-link:hover {
+  color: #f4d35e;
+}
+
+/* Tombol */
+.btn-outline-secondary {
+  color: #1e3a5f;
+  border-color: #1e3a5f;
+}
+.btn-outline-secondary:hover {
+  background-color: #1e3a5f;
+  color: #ffffff;
+}
+
+/* Section */
+section {
+  background-color: #fdfcf7; /* krem lembut */
+  color: #1c1c1c;
+  border-radius: 10px;
+  padding: 30px;
+  margin-bottom: 20px;
+}
+
+/* Card */
+.card {
+  background-color: #f7f8fa;
+  color: #1c1c1c;
+  border: 1px solid #d0d6e0;
+  border-radius: 10px;
+}
+.card:hover {
+  border-color: #f4d35e;
+  box-shadow: 0 4px 15px rgba(244, 211, 94, 0.3);
+}
+
+/* Footer */
+footer {
+  background-color: #1e3a5f;
+  color: #e9ecef;
+}
+footer a {
+  color: #f4d35e;
+}
+footer a:hover {
+  color: #ffd60a;
+}
+
+/* =====================
+   MODE GELAP (DARK MODE)
+===================== */
+
+/* Body */
+body.dark-mode {
+  background-color: #0d1117; /* gelap elegan */
+  color: #e0e1dd;
+}
+
+/* Navbar */
+.navbar.dark-mode {
+  background-color: #161b22; /* biru keabu-an gelap */
+}
+.navbar.dark-mode .navbar-brand {
+  color: #f4d35e; /* tetap gold biar kontras */
+}
+.navbar.dark-mode .nav-link {
+  color: #e0e1dd;
+}
+.navbar.dark-mode .nav-link:hover {
+  color: #f4d35e;
+}
+
+/* Tombol */
+.btn-outline-secondary.dark-mode {
+  color: #f4d35e;
+  border-color: #f4d35e;
+}
+.btn-outline-secondary.dark-mode:hover {
+  background-color: #f4d35e;
+  color: #161b22;
+}
+
+/* Section */
+section.dark-mode {
+  background-color: #1a1f2b;
+  color: #e0e1dd;
+  border-radius: 10px;
+}
+
+/* Card */
+.card.dark-mode {
+  background-color: #22283b;
+  color: #e0e1dd;
+  border-color: #343a50;
+  border-radius: 10px;
+}
+.card.dark-mode:hover {
+  border-color: #f4d35e;
+  box-shadow: 0 0 12px rgba(244, 211, 94, 0.3);
+}
+
+/* Footer */
+footer.dark-mode {
+  background-color: #161b22;
+  color: #e0e1dd;
+}
+footer.dark-mode a {
+  color: #f4d35e;
+}
+footer.dark-mode a:hover {
+  color: #ffd60a;
+}
