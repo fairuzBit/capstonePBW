@@ -51,112 +51,40 @@
     </section>
 
     <!-- ARTICLE -->
-    <section id="article" class="text-center p-5">
-      <div class="container">
-        <h1 class="fw-bold display-4 pb-3">Article</h1>
-        <div class="row row-cols-1 row-cols-md-3 g-4 justify-content-center">
-          <div class="col">
-            <div class="card h-100">
-              <img
-                src="../img/aku.jpeg"
-                class="card-img-top"
-                alt="Potret Aku"
-              />
-              <div class="card-body">
-                <h5 class="card-title">Tentang Aku</h5>
-                <p class="card-text">
-                  Potret diriku ketika SMA dengan semua kesibukan ku.
-                </p>
-              </div>
-              <div class="card-footer">
-                <small class="text-body-secondary"
-                  >Last updated 3 mins ago</small
-                >
-              </div>
-            </div>
-          </div>
+    <!-- article begin -->
+<section id="article" class="text-center p-5">
+  <div class="container">
+    <h1 class="fw-bold display-4 pb-3">article</h1>
+    <div class="row row-cols-1 row-cols-md-3 g-4 justify-content-center">
+      <?php
+      $sql = "SELECT * FROM article ORDER BY tanggal DESC";
+      $hasil = $conn->query($sql); 
 
-          <div class="col">
-            <div class="card h-100">
-              <img
-                src="../img/bankIndo.jpeg"
-                class="card-img-top"
-                alt="Gedung BI"
-              />
-              <div class="card-body">
-                <h5 class="card-title">Bank Indonesia</h5>
-                <p class="card-text">
-                  Gedung Bank Indonesia yang terletak di Jogja.
-                </p>
-              </div>
-              <div class="card-footer">
-                <small class="text-body-secondary"
-                  >Last updated 3 mins ago</small
-                >
-              </div>
+      while($row = $hasil->fetch_assoc()){
+      ?>
+        <div class="col">
+          <div class="card h-100">
+            <img src="img/<?= $row["gambar"]?>" class="card-img-top" alt="..." />
+            <div class="card-body">
+              <h5 class="card-title"><?= $row["judul"]?></h5>
+              <p class="card-text">
+                <?= $row["isi"]?>
+              </p>
             </div>
-          </div>
-
-          <div class="col">
-            <div class="card h-100">
-              <img src="../img/budaya.jpeg" class="card-img-top" alt="Leyak" />
-              <div class="card-body">
-                <h5 class="card-title">Leyak</h5>
-                <p class="card-text">
-                  Penampilan ragam budaya Indonesia untuk memperingati hari
-                  Kemerdekaan.
-                </p>
-              </div>
-              <div class="card-footer">
-                <small class="text-body-secondary"
-                  >Last updated 3 mins ago</small
-                >
-              </div>
-            </div>
-          </div>
-
-          <div class="col">
-            <div class="card h-100">
-              <img
-                src="../img/kotaLama.jpeg"
-                class="card-img-top"
-                alt="Barang Antik"
-              />
-              <div class="card-body">
-                <h5 class="card-title">Barang Antik</h5>
-                <p class="card-text">
-                  Patung bunda maria yang menjadi salah satu barang antik di
-                  kota lama.
-                </p>
-              </div>
-              <div class="card-footer">
-                <small class="text-body-secondary"
-                  >Last updated 3 mins ago</small
-                >
-              </div>
-            </div>
-          </div>
-
-          <div class="col">
-            <div class="card h-100">
-              <img src="../img/rumput.jpeg" class="card-img-top" alt="Rumput" />
-              <div class="card-body">
-                <h5 class="card-title">Rumput</h5>
-                <p class="card-text">
-                  Gambar close up rumput dengan typography bertuliskan "suket"
-                  (aksara jawa).
-                </p>
-              </div>
-              <div class="card-footer">
-                <small class="text-body-secondary"
-                  >Last updated 3 mins ago</small
-                >
-              </div>
+            <div class="card-footer">
+              <small class="text-body-secondary">
+                <?= $row["tanggal"]?>
+              </small>
             </div>
           </div>
         </div>
-      </div>
-    </section>
+        <?php
+      }
+      ?> 
+    </div>
+  </div>
+</section>
+<!-- article end -->
 
     <!-- GALLERY -->
     <section id="gallery" class="text-center p-5">

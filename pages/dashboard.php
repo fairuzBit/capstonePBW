@@ -39,7 +39,6 @@ $jumlah_article = $hasil1->num_rows;
 </head>
 <body>
 
-    <?php include "../layout/header.html" ?>
 
     <div class="container mt-5" style="min-height: 60vh;">
         <h2 class="text-center mb-4">Dashboard Admin</h2>

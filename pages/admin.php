@@ -3,9 +3,10 @@ session_start();
 
 include "../service/database.php";  
 
-//check jika belum ada user yang login arahkan ke halaman login
+// Cek jika belum login
 if (!isset($_SESSION['username'])) { 
 	header("location:login.php"); 
+    exit();
 } 
 ?>
 
@@ -31,46 +32,50 @@ if (!isset($_SESSION['username'])) {
 
     <link rel="icon" href="../img/logo.webp" />
     <style>  
-        html {
-            position: relative;
-            min-height: 100%;
-        }
-        body {
-            margin-bottom: 100px; /* Margin bottom by footer height */
-        }
-        footer {
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            height: 100px; /* Set the fixed height of the footer here */ 
-        }
+        html { position: relative; min-height: 100%; }
+        body { margin-bottom: 100px; }
+        footer { position: absolute; bottom: 0; width: 100%; height: 100px; }
     </style>
 </head>
 <body>
-    <!-- nav begin -->
-    <!--?php include "../layout/header.html" ?-->
-    <!-- nav end -->
-    <!-- content begin -->
+    
+    <?php include "../layout/header.html" ?>
+
     <section id="content" class="p-5">
-    <div class="container">
-        <?php
-        if(isset($_GET['page'])){
-        ?>
-            <h4 class="lead display-6 pb-2 border-bottom border-danger-subtle"><?= ucfirst($_GET['page'])?></h4>
+        <div class="container">
             <?php
-            include($_GET['page'].".php");
-        }else{
-        ?>
-            <h4 class="lead display-6 pb-2 border-bottom border-danger-subtle">Dashboard</h4>
-            <?php
-            include("dashboard.php");
-        }
-        ?>
-    </div>
-</section>
-    <!-- content end -->
-    <!-- footer begin -->
+            if(isset($_GET['page'])){
+                // Ambil nilai page (misal: 'article', 'home')
+                $page_name = ucfirst($_GET['page']);
+                
+                // Include file halaman
+                if(file_exists($_GET['page'].".php")){
+                    include($_GET['page'].".php");
+                } else {
+                    echo "<h3 class='text-danger'>Halaman tidak ditemukan!</h3>";
+                }
+            } else {
+                $page_name = "Dashboard"; // Default title
+                include("dashboard.php");
+            }
+            ?>
+        </div>
+    </section>
     <?php include "../layout/footer.html" ?>
-    <!-- footer end -->
+    <script>
+        // Ambil elemen judul di navbar (id="judul")
+        const judulElement = document.getElementById("judul");
+        
+        // Ambil nama halaman dari PHP tadi
+        const pageName = "<?= $page_name ?>";
+
+        // Ubah teks "My Daily Journal" menjadi nama halaman (misal: Article)
+        // Jika bos ingin formatnya "My Daily Journal - Article", ubah jadi:
+        // judulElement.innerText = "My Daily Journal - " + pageName;
+        if(pageName) {
+            judulElement.innerText = pageName + " Page";
+        }
+    </script>
+
 </body>
-</html> 
+</html>
