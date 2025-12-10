@@ -1,28 +1,28 @@
 <?php 
-    include "../service/database.php";
-    session_start();
+    // include "../service/database.php";
+    // session_start();
 
-    $register_message="";
-    if($_SESSION['is_login']){
-         header("location:../pages/dashboard.php");
+    // $register_message="";
+    // if($_SESSION['is_login']){
+    //      header("location:../pages/dashboard.php");
 
-    }
+    // }
     
-    if(isset($_POST["register"])){
-        $username=$_POST["username"];
-        $password=$_POST["password"];
+    // if(isset($_POST["register"])){
+    //     $username=$_POST["username"];
+    //     $password=$_POST["password"];
     
     
-        $sql = "INSERT INTO users (username, password) VALUES
-        ('$username','$password')";
+    //     $sql = "INSERT INTO users (username, password) VALUES
+    //     ('$username','$password')";
 
-        if($db->query($sql)){
-            $register_message="silahkan login";
+    //     if($db->query($sql)){
+    //         $register_message="silahkan login";
 
-        } else {
-            $register_message="gagal mendaftar coba lagi";
-        }
-    }
+    //     } else {
+    //         $register_message="gagal mendaftar coba lagi";
+    //     }
+    // }
 
 
 ?>
@@ -90,7 +90,7 @@
                 </div>
                 
                 <div class="card-footer text-center bg-transparent border-0 mt-2">
-                    <small>Sudah punya akun? <a href="/pages/login.php" class="fw-bold">login disini</a></small>
+                    <small>Sudah punya akun? <a href="login.php" class="fw-bold">login disini</a></small>
                 </div>
             </div>
 

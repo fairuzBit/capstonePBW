@@ -29,8 +29,12 @@
 </head>
 <body>
     <?php include "layout/header.html" ?>
-    <h1>masuk untuk melihat web</h1>
-    <button><a href="pages/login.php">Login</a></button>
+    
+    <div class="container text-center mt-5">
+        <h1>Masuk untuk melihat web</h1>
+        <a href="/pages/login.php" class="btn btn-primary mt-3">Login</a>
+    </div>
+
     <?php include "layout/footer.html" ?>
 </body>
 </html>

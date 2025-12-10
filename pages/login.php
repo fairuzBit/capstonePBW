@@ -1,33 +1,53 @@
 <?php
-    include "./service/database.php";
-    session_start();
+//memulai session atau melanjutkan session yang sudah ada
+session_start();
 
-    $login_message = "";
+//menyertakan code dari file koneksi
+include "../service/database.php";
+//check jika sudah ada user yang login arahkan ke halaman admin
+if (isset($_SESSION['username'])) { 
+	header("location:admin.php"); 
+}
 
-    // Cek status login
-    if(isset($_SESSION['is_login']) && $_SESSION['is_login'] == true){
-         header("location:../index.php");
-         exit();
-    }
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+  $username = $_POST['user'];
+  
+  //menggunakan fungsi enkripsi md5 supaya sama dengan password  yang tersimpan di database
+  $password = md5($_POST['password']);
 
-    if(isset($_POST['login'])){
-        $username = $_POST['username'];
-        $password = $_POST['password'];
+	//prepared statement
+  $stmt = $conn->prepare("SELECT username 
+                          FROM user 
+                          WHERE username=? AND password=?");
 
-        // Query database
-        $sql = "SELECT * FROM users WHERE username='$username' AND password='$password'";
-        $result = $db->query($sql);
+	//parameter binding 
+  $stmt->bind_param("ss", $username, $password);//username string dan password string
+  
+  //database executes the statement
+  $stmt->execute();
+  
+  //menampung hasil eksekusi
+  $hasil = $stmt->get_result();
+  
+  //mengambil baris dari hasil sebagai array asosiatif
+  $row = $hasil->fetch_array(MYSQLI_ASSOC);
 
-        if($result->num_rows > 0){
-            $data = $result->fetch_assoc();
-            $_SESSION['username'] = $data["username"];
-            $_SESSION['is_login'] = true;
+  //check apakah ada baris hasil data user yang cocok
+  if (!empty($row)) {
+    //jika ada, simpan variable username pada session
+    $_SESSION['username'] = $row['username'];
 
-            header("location:pages/dashboard.php");
-        } else {
-            $login_message = "Akun tidak ditemukan atau password salah";
-        }
-    }
+    //mengalihkan ke halaman admin
+    header("location:admin.php");
+  } else {
+	  //jika tidak ada (gagal), alihkan kembali ke halaman login
+    header("location:login.php");
+  }
+
+	//menutup koneksi database
+  $stmt->close();
+  $conn->close();
+} else {
 ?>
 
 <!DOCTYPE html>
@@ -39,21 +59,18 @@
     
    <link rel="stylesheet" href="../styles.css" />
 
-    <!-- Bootstrap CSS -->
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
       rel="stylesheet"
       crossorigin="anonymous"
     />
 
-    <!-- Bootstrap Icons -->
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
     />
 
-    <!-- Favicon -->
-    <link rel="icon" href="img/logo.webp" />
+    <link rel="icon" href="../img/logo.webp" />
 </head>
 <body>
 
@@ -72,19 +89,23 @@
                         </div>
                     <?php endif; ?>
 
-                    <form action="/pages/login.php" method="POST">
+                    <form action="" method="POST" id="loginForm">
                         <div class="mb-3">
                             <label for="username" class="form-label">Username</label>
-                            <input type="text" class="form-control" name="username" placeholder="Masukkan username" required>
+                            <input type="text" class="form-control" name="username" id="username" placeholder="Masukkan username">
                         </div>
                         
                         <div class="mb-3">
                             <label for="password" class="form-label">Password</label>
-                            <input type="password" class="form-control" name="password" placeholder="Masukkan password" required>
+                            <input type="password" class="form-control" name="password" id="password" placeholder="Masukkan password">
                         </div>
 
-                        <div class="d-grid gap-2 mt-4">
-                            <button type="submit" name="login" class="btn btn-primary" style="background-color: #1e3a5f; border: none;">
+                        <div class="text-center mb-2">
+                            <small id="errorMsg" class="text-danger fw-bold"></small>
+                        </div>
+
+                        <div class="d-grid gap-2 mt-2">
+                            <button type="submit" name="" class="btn btn-primary" style="background-color: #1e3a5f; border: none;">
                                 Login Sekarang
                             </button>
                         </div>
@@ -92,7 +113,7 @@
                 </div>
                 
                 <div class="card-footer text-center bg-transparent border-0 mt-2">
-                    <small>Belum punya akun? <a href="/pages/register.php" class="fw-bold">Daftar disini</a></small>
+                    <small>Belum punya akun? <a href="register.php" class="fw-bold">Daftar disini</a></small>
                 </div>
             </div>
 
@@ -111,14 +132,13 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
     <script>
-        // Script Sederhana untuk Mengaktifkan CSS Dark Mode Bos
         const toggleBtn = document.getElementById('darkModeToggle');
         const elementsToToggle = [
             document.body, 
             document.querySelector('.navbar'), 
             document.querySelector('.card'), 
             document.querySelector('footer'),
-            document.querySelector('section') // Jika ada section
+            document.querySelector('section')
         ];
 
         toggleBtn.addEventListener('click', () => {
@@ -126,7 +146,6 @@
                 if(el) el.classList.toggle('dark-mode');
             });
 
-            // Ganti Icon
             if (document.body.classList.contains('dark-mode')) {
                 toggleBtn.innerText = '☀️';
             } else {
@@ -134,5 +153,9 @@
             }
         });
     </script>
+
+    <?php
+}
+?>
 </body>
-</html> 
+</html>
